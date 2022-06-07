@@ -1,10 +1,10 @@
 import { dbConnection } from '../../databaseConnection.js'
-import { userSchema } from "../../schemas/user/index.js";
+import { signupSchema, signinSchema } from "../../schemas/user/index.js";
 
 async function validateSignup(req, res, next){
     const user = req.body
     const {email} = user
-    const validation = userSchema.validate(user)
+    const validation = signupSchema.validate(user)
     if(validation.error) return res.status(422).send(validation.error.details.map(detail => detail.message))
 
     try {
@@ -18,4 +18,12 @@ async function validateSignup(req, res, next){
     }
 }
 
-export {validateSignup}
+
+async function validateSignin(req, res, next){
+    const userCredentials = req.body
+    const validation = signinSchema.validate(userCredentials)
+    if(validation.error) return res.status(422).send(validation.error.details.map(detail => detail.message))
+    next()
+}
+
+export {validateSignup, validateSignin}
