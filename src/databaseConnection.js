@@ -16,6 +16,6 @@ if (process.env.MODE === 'PROD'){
 
 }
 
-const connection = new Pool(databaseConfig)
+const dbConnection = new Pool(databaseConfig)
 
-export {connection}
+export {dbConnection}
