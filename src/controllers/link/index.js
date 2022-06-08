@@ -16,4 +16,25 @@ async function createLink(req, res){
     }
 }
 
-export {createLink}
+async function getLinkById(req, res){
+    const {id} = req.params
+    if(!id) return res.sendStatus(401)
+
+    try {
+       const {rows: links} = await dbConnection.query(`SELECT * from links l
+                                  WHERE l.id = $1`, [id])
+        if (links.length === 0) return res.sendStatus(404)
+        res.status(200).send(
+            {
+                id: links[0].id,
+                shortUrl: links[0].shortUrl, 
+                url: links[0].url
+            }
+        )
+    } catch (error) {
+        console.log(error)
+        res.sendStatus(500)
+    }
+}
+
+export {createLink, getLinkById}
