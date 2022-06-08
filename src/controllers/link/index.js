@@ -57,5 +57,29 @@ async function getLinkAndOpen(req, res){
      }
 }
 
+async function deleteLink(req, res){
+    const userId = res.locals.user.id
+    const linkId = req.params.id
 
-export {createLink, getLinkById, getLinkAndOpen}
+
+    try {
+        const {rowCount: isOwner} = await dbConnection.query(`SELECT *
+                                                              FROM links l
+                                                              WHERE l."userId" = $1
+                                                              AND l.id = $2`, [userId, linkId])
+        console.log(isOwner)
+        if (isOwner === 0 ) return res.sendStatus(401)
+        if (!isOwner) return res.sendStatus(404)
+
+        await dbConnection.query(`DELETE 
+                                  FROM links l
+                                  WHERE l."userId" = $1
+                                  AND l.id = $2`, [userId, linkId])
+        res.sendStatus(204)
+    } catch (error) {
+        console.log(error)
+        res.sendStatus(500)
+    }
+}
+
+export {createLink, getLinkById, getLinkAndOpen, deleteLink}
