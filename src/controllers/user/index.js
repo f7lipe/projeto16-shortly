@@ -5,13 +5,12 @@ import {v4 as uuid} from 'uuid'
 async function createUser(req, res){
     const user = req.body
     const {name, email, password} = user
-
     try {
         const passwordHash = bcrypt.hashSync(password, 10);
 
         await dbConnection.query(`INSERT INTO 
                                   users(name, email, password) 
-                                  VALUES ($1)`, [name, email, passwordHash])
+                                  VALUES ($1, $2, $3)`, [name, email, passwordHash])
         res.sendStatus(201)
     } catch (error) {
         console.log(error)
