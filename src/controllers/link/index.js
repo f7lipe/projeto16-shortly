@@ -22,7 +22,7 @@ async function getLinkById(req, res){
 
     try {
        const {rows: links} = await dbConnection.query(`SELECT * from links l
-                                  WHERE l.id = $1`, [id])
+                                                       WHERE l.id = $1`, [id])
         if (links.length === 0) return res.sendStatus(404)
         res.status(200).send(
             {
@@ -37,4 +37,25 @@ async function getLinkById(req, res){
     }
 }
 
-export {createLink, getLinkById}
+async function getLinkAndOpen(req, res){
+    const {shortUrl} = req.params
+
+    try {
+        const {rows: links} = await dbConnection.query(`SELECT * from links l
+                                                        WHERE l."shortUrl" = $1`, [shortUrl])
+         if (links.length === 0) return res.sendStatus(404)
+
+        await dbConnection.query(`UPDATE links
+                                  SET "views" = "views" + 1
+                                  WHERE id = $1`, [links[0].id])
+
+         const parseruRL = JSON.parse(links[0].url)
+         res.redirect(parseruRL.url)
+     } catch (error) {
+         console.log(error)
+         res.sendStatus(500)
+     }
+}
+
+
+export {createLink, getLinkById, getLinkAndOpen}
