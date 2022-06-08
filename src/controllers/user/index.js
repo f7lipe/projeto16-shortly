@@ -73,4 +73,24 @@ async function getUserById(req, res){
     }
 }
 
-export {createUser, getUser, getUserById}
+async function getRank(req, res){
+    try {
+        const {rows: rank} = await dbConnection.query(
+            `
+            SELECT u.id, u.name,
+            COUNT (*) as "linksCount",
+            SUM (l.views) as "visitCount"
+            FROM users u
+            LEFT JOIN links l on l."userId" = u.id
+            GROUP BY u.id
+            LIMIT 10
+            `
+        )
+
+        res.status(200).send(rank)
+    } catch (error) {
+        console.log(error)
+        res.sendStatus(500)
+    }
+}
+export {createUser, getUser, getUserById, getRank}
