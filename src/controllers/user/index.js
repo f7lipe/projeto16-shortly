@@ -61,6 +61,8 @@ async function getUserById(req, res){
             WHERE l."userId" = $1
             ORDER BY l.views DESC`, [id]
         )
+        
+        if (user.length === 0 ) return res.sendStatus(404)
 
         res.status(200).send(
           {  ...user[0],
@@ -86,6 +88,8 @@ async function getRank(req, res){
             LIMIT 10
             `
         )
+
+        if (rank.length === 0 ) return res.sendStatus(404)
 
         res.status(200).send(rank)
     } catch (error) {

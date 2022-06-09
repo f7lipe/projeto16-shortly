@@ -2,7 +2,7 @@ import { nanoid } from "nanoid";
 import { dbConnection } from '../../databaseConnection.js'
 
 async function createLink(req, res){
-    const url = req.body
+    const url = req.body.url
     const {id} = res.locals.user
     const shortUrl = nanoid(6)
 
